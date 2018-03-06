@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { ElectronService } from './providers/electron.service';
 import { TranslateService } from '@ngx-translate/core';
-import { AppConfig } from './app.config';
 
 @Component({
   selector: 'app-root',
@@ -13,12 +12,13 @@ export class AppComponent {
     private translate: TranslateService) {
 
     translate.setDefaultLang('en');
-    console.log('AppConfig', AppConfig);
 
     if (electronService.isElectron()) {
       console.log('Mode electron');
-      console.log('Electron ipcRenderer', electronService.ipcRenderer);
-      console.log('NodeJS childProcess', electronService.childProcess);
+      // Check if electron is correctly injected (see externals in webpack.config.js)
+      console.log('c', electronService.ipcRenderer);
+      // Check if nodeJs childProcess is correctly injected (see externals in webpack.config.js)
+      console.log('c', electronService.childProcess);
     } else {
       console.log('Mode web');
     }

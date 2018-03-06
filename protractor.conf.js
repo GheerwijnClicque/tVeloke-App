@@ -5,6 +5,7 @@ const { SpecReporter } = require('jasmine-spec-reporter');
 
 exports.config = {
   allScriptsTimeout: 25000,
+  getPageTimeout: 15000,
   delayBrowserTimeInSeconds: 0,
   specs: [
     './e2e/**/*.e2e-spec.ts'
@@ -12,20 +13,18 @@ exports.config = {
   capabilities: {
     'browserName': 'chrome',
     chromeOptions: {
-      args: ["--no-sandbox",  "--headless", "--disable-gpu"]
+      binary: './node_modules/electron/dist/electron.exe',
+      args: ['--test-type=webdriver', 'app=dist/main.js']
     }
   },
-  chromeOnly: true,
   directConnect: true,
   baseUrl: 'http://localhost:4200/',
   framework: 'jasmine2',
   jasmineNodeOpts: {
     showColors: true,
     defaultTimeoutInterval: 30000,
-    print: function () { },
-    realtimeFailure: true
+    print: function () { }
   },
-  useAllAngular2AppRoots: true,
   beforeLaunch: function () {
     require('ts-node').register({
       project: 'e2e/tsconfig.e2e.json'
