@@ -35,7 +35,8 @@
     "test": "karma start ./karma.conf.js",
     "pree2e": "webdriver-manager update --standalone false --gecko false --quiet && npm run build",
     "e2e": "protractor ./protractor.conf.js",
-    "rebuild": "electron-rebuild -f -w serialport"
+    "rebuild": "electron-rebuild -f -w serialport",
+    "install": "electron-rebuild"
   },
   "dependencies": {
     "johnny-five": "^0.14.1",
@@ -58,6 +59,7 @@
     "@types/core-js": "0.9.36",
     "@types/jasmine": "2.5.54",
     "@types/jasminewd2": "2.0.2",
+    "@types/johnny-five": "0.0.34",
     "@types/node": "7.0.7",
     "autoprefixer": "7.1.4",
     "circular-dependency-plugin": "3.0.0",

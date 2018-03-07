@@ -3,6 +3,7 @@ import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 
 import { AppModule } from './app/app.module';
 import { environment } from 'environments';
+import { Board } from 'johnny-five';
 
 if (environment.production) {
   enableProdMode();
@@ -13,3 +14,9 @@ platformBrowserDynamic()
     preserveWhitespaces: false
   })
   .catch(err => console.error(err));
+
+const board = new Board({debug: true});
+
+board.on('test', () => {
+  console.log('ready');
+});
