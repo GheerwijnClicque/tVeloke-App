@@ -1,5 +1,6 @@
 import { app, BrowserWindow, screen } from 'electron';
 import * as path from 'path';
+import { Board } from 'johnny-five';
 
 let win, serve;
 const args = process.argv.slice(1);
@@ -10,6 +11,12 @@ if (serve) {
   require('electron-reload')(__dirname, {
   });
 }
+
+const board = new Board({debug: true, port: 'COM4', repl: false});
+
+board.on('ready', () => {
+  console.log('ready');
+});
 
 function createWindow() {
 

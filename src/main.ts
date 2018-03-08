@@ -14,9 +14,3 @@ platformBrowserDynamic()
     preserveWhitespaces: false
   })
   .catch(err => console.error(err));
-
-const board = new Board({debug: true});
-
-board.on('test', () => {
-  console.log('ready');
-});
