@@ -16,6 +16,8 @@ export class ElectronService {
     if (this.isElectron()) {
       this.ipcRenderer = window.require('electron').ipcRenderer;
       this.childProcess = window.require('child_process');
+      this.ipcRenderer.send('test-event', 'regenboogAapje');
+
     }
   }
 
@@ -23,4 +25,6 @@ export class ElectronService {
     return window && window.process && window.process.type;
   }
 
+
+  
 }

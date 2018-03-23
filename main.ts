@@ -1,22 +1,65 @@
-import { app, BrowserWindow, screen } from 'electron';
+import { app, BrowserWindow, screen, ipcMain } from 'electron';
 import * as path from 'path';
-import { Board } from 'johnny-five';
+import { HardwareConnector } from './hardware-worker';
+
+var now = require("performance-now");
+
+var five = require("johnny-five");
+var board = new five.Board();
+var sensor;
 
 let win, serve;
 const args = process.argv.slice(1);
 serve = args.some(val => val === '--serve');
 import * as url from 'url';
+import { setInterval } from 'timers';
 
 if (serve) {
   require('electron-reload')(__dirname, {
   });
 }
 
-const board = new Board({debug: true, port: 'COM4', repl: false});
 
-board.on('ready', () => {
+
+
+/* board.on('ready', () => {
   console.log('ready');
-});
+  var led = five.Led(13);
+  led.blink(1000);
+}); */
+function getAvgRPM(win) {
+  var connected = false;
+  
+  const sampleTime = 500; // ms
+  const radius = 1; // m
+  const w = 0.10472;
+
+  var rpmMax = 0;
+  var rpm = 0;
+  var currentTime = 0;
+  var startTime = now();
+  var count = 0;
+
+  sensor.on('change', function() {
+      if (currentTime <= sampleTime) {
+          if (this.value) {
+              count++;
+              rpm = (count/currentTime) * 60000;
+              if (rpm > rpmMax) rpmMax = rpm;
+          }
+      }
+      else {
+          currentTime = 0;
+          startTime = now();
+          count = 0;
+      }
+      currentTime = now() - startTime;     
+      var speed = radius * rpm * w;
+      var kmh = (5 * speed) / 18;
+      console.log('speed: ' + kmh + ' km/h');      
+      win.webContents.send('update' , {msg: kmh});  
+  });
+}
 
 function createWindow() {
 
@@ -42,6 +85,16 @@ function createWindow() {
   if (serve) {
     win.webContents.openDevTools();
   }
+
+  //const board = new Board({debug: true, repl: false});
+  board.on('ready', () => {
+    console.log('ready');
+    sensor = new five.Sensor({
+      pin: 7, 
+      type: "digital"
+    });
+    getAvgRPM(win);
+  });
 
   // Emitted when the window is closed.
   win.on('closed', () => {

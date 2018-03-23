@@ -4,14 +4,44 @@
   align-items: center;
   justify-content: center;
 
-  background: url(../../../assets/background.jpg) no-repeat center fixed;
+  background: url(../../../assets/bg-home.png) no-repeat center fixed;
   -webkit-background-size: cover; /* pour anciens Chrome et Safari */
   background-size: cover; /* version standardisée */
 
   .title {
-    color: white;
-    margin:0;
-    padding:50px 20px;
+    background: url(../../../assets/logo-text.png) no-repeat center fixed;    
+    width: 45rem;
+    height: 10rem;
   }
 
+}
+
+.flexcontainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.flexcontainer.column {
+  -webkit-flex-direction: column;
+  flex-direction: column;
+}
+
+.flexcontainer.row.center, .flexcontainer.column.center {
+  -webkit-align-items: center;
+  align-items: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+}
+
+.flexcontent {
+  width: 100%;
+  margin-bottom: 4rem;
+  text-align: center;
+}
+
+.flexcontent img {
+  width: 100%;
+  height: auto;
 }

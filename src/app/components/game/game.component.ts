@@ -3,11 +3,11 @@ import { Router, NavigationEnd } from '@angular/router';
 var ipc = require('electron').ipcRenderer;
 
 @Component({
-  selector: 'app-home',
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss']
+  selector: 'app-game',
+  templateUrl: './game.component.html',
+  styleUrls: ['./game.component.scss']
 })
-export class HomeComponent implements OnInit {
+export class GameComponent implements OnInit {
   public speed = '';
   
   constructor(private router: Router) { 
@@ -18,10 +18,11 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  ngOnInit() {
-  }
-
   public navigate(url: string) {
     this.router.navigate([url]);
   }
+
+  ngOnInit() {
+  }
+
 }
