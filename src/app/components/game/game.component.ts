@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
-var ipc = require('electron').ipcRenderer;
+import { ElectronService } from '../../providers/electron.service';
+import { ReplaySubject } from 'rxjs';
 
 @Component({
   selector: 'app-game',
@@ -9,13 +10,13 @@ var ipc = require('electron').ipcRenderer;
 })
 export class GameComponent implements OnInit {
   public speed = '';
-  
-  constructor(private router: Router) { 
-    ipc.on('update', (event, args) => {
-      console.log('Received update: ');
-      console.log(args);
-      this.speed = args['msg'];
-    });
+
+  constructor(private router: Router, private electronService: ElectronService) {
+    this.electronService.ipcRenderer.send('RequestRpm');
+
+    this.electronService.ipcRenderer.on('SendRpm', (event, args) => {
+      this.speed = args;
+    })
   }
 
   public navigate(url: string) {

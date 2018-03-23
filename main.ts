@@ -1,65 +1,84 @@
 import { app, BrowserWindow, screen, ipcMain } from 'electron';
 import * as path from 'path';
-import { HardwareConnector } from './hardware-worker';
+import { Board, Sensor } from 'johnny-five';
+import * as url from 'url';
+import { setInterval } from 'timers';
+const now = require('performance-now');
+const board = new Board({debug: true, repl: false, port: 'COM6'});
+const values = [];
+const amount = 10;
+const freq = 250;
+import { ReplaySubject } from 'rxjs';
 
-var now = require("performance-now");
 
-var five = require("johnny-five");
-var board = new five.Board();
-var sensor;
+ // const board = new Board({debug: true, repl: false});
+ board.on('ready', () => {
+  const sensor = new Sensor({
+    pin: 7,
+    type: 'digital',
+    freq: freq,
+    enabled: true
+  } as any);
+
+  let rpmUpdates = new ReplaySubject(1);
+  let test;
+
+  rpmUpdates.subscribe((value: number) => {
+    if (test) {
+      test.send('SendRpm',  value);
+    }
+  })
+
+
+  sensor.on('change', () => {
+    values.push(sensor.value);
+    if (values.length > amount) {
+      values.splice(0, 1);
+
+
+      let prevValue = values[0];
+      let sum = 1;
+      let result = [];
+      for (let i = 1; i < values.length; i++) {
+        if (values[i] !== prevValue) {
+          result.push(sum);
+          sum = 1;
+          prevValue = values[i];
+        } else {
+          sum++;
+        }
+      }
+      let averageFreq = result.reduce((a, b) => {
+        return a + b;
+      }, 0) / result.length * freq * 2 / 1000;
+
+      let rpm = 1 / averageFreq * 60;
+
+      rpmUpdates.next(rpm);
+    }
+  })
+
+  ipcMain.on('RequestRpm', (event, arg) => {
+    test = event.sender;
+  });
+
+});
+
+
+board.on('error', () => {
+  console.log('error');
+});
 
 let win, serve;
 const args = process.argv.slice(1);
 serve = args.some(val => val === '--serve');
-import * as url from 'url';
-import { setInterval } from 'timers';
+
 
 if (serve) {
-  require('electron-reload')(__dirname, {
-  });
+  require('electron-reload')(__dirname, {});
 }
 
 
-
-
-/* board.on('ready', () => {
-  console.log('ready');
-  var led = five.Led(13);
-  led.blink(1000);
-}); */
-function getAvgRPM(win) {
-  var connected = false;
-  
-  const sampleTime = 500; // ms
-  const radius = 1; // m
-  const w = 0.10472;
-
-  var rpmMax = 0;
-  var rpm = 0;
-  var currentTime = 0;
-  var startTime = now();
-  var count = 0;
-
-  sensor.on('change', function() {
-      if (currentTime <= sampleTime) {
-          if (this.value) {
-              count++;
-              rpm = (count/currentTime) * 60000;
-              if (rpm > rpmMax) rpmMax = rpm;
-          }
-      }
-      else {
-          currentTime = 0;
-          startTime = now();
-          count = 0;
-      }
-      currentTime = now() - startTime;     
-      var speed = radius * rpm * w;
-      var kmh = (5 * speed) / 18;
-      console.log('speed: ' + kmh + ' km/h');      
-      win.webContents.send('update' , {msg: kmh});  
-  });
-}
 
 function createWindow() {
 
@@ -85,16 +104,6 @@ function createWindow() {
   if (serve) {
     win.webContents.openDevTools();
   }
-
-  //const board = new Board({debug: true, repl: false});
-  board.on('ready', () => {
-    console.log('ready');
-    sensor = new five.Sensor({
-      pin: 7, 
-      type: "digital"
-    });
-    getAvgRPM(win);
-  });
 
   // Emitted when the window is closed.
   win.on('closed', () => {
