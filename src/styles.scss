@@ -1,9 +1,13 @@
 /* You can add global styles to this file, and also import other style files */
+//brown: #F4F4D9
+//green-light: #3DB230
+//green-dark: #006837
+//blue: #1A244B
 html, body {
   margin: 0;
   padding: 0;
-
   height: 100%;
+  background-color: #F4F4D9;
 }
 
 .btn {
@@ -20,4 +24,15 @@ html, body {
 
 .navigatelink {
   cursor: pointer !important;
+}
+
+.inline-block {
+  display: inline-block;
+}
+
+.flex-grid {
+  display: flex;
+}
+.col {
+  flex: 1;
 }

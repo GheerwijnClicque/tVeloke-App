@@ -1,69 +1,101 @@
 import { app, BrowserWindow, screen, ipcMain } from 'electron';
 import * as path from 'path';
 import { Board, Sensor } from 'johnny-five';
+var five = require("johnny-five");
 import * as url from 'url';
 import { setInterval } from 'timers';
 const now = require('performance-now');
-const board = new Board({debug: true, repl: false, port: 'COM6'});
+const board = new Board({debug: true, repl: false});
 const values = [];
-const amount = 10;
-const freq = 250;
+const amount = 50;
+const freq = 50; //ms
 import { ReplaySubject } from 'rxjs';
+const rpmUpdates = new ReplaySubject(1);
 
+var valuesAll = [
+  [],
+  [],
+  [],
+  []
+];
 
  // const board = new Board({debug: true, repl: false});
  board.on('ready', () => {
-  const sensor = new Sensor({
+  // Initialize sensors
+  var sensor1 = new five.Sensor({
+    id: 0,
     pin: 7,
     type: 'digital',
-    freq: freq,
-    enabled: true
-  } as any);
-
-  let rpmUpdates = new ReplaySubject(1);
-  let test;
-
-  rpmUpdates.subscribe((value: number) => {
-    if (test) {
-      test.send('SendRpm',  value);
-    }
-  })
-
-
-  sensor.on('change', () => {
-    values.push(sensor.value);
-    if (values.length > amount) {
-      values.splice(0, 1);
-
-
-      let prevValue = values[0];
-      let sum = 1;
-      let result = [];
-      for (let i = 1; i < values.length; i++) {
-        if (values[i] !== prevValue) {
-          result.push(sum);
-          sum = 1;
-          prevValue = values[i];
-        } else {
-          sum++;
-        }
-      }
-      let averageFreq = result.reduce((a, b) => {
-        return a + b;
-      }, 0) / result.length * freq * 2 / 1000;
-
-      let rpm = 1 / averageFreq * 60;
-
-      rpmUpdates.next(rpm);
-    }
-  })
-
-  ipcMain.on('RequestRpm', (event, arg) => {
-    test = event.sender;
+    freq: freq
   });
 
-});
+  var sensor2 = new five.Sensor({
+    id: 1,    
+    pin: 8,
+    type: 'digital',
+    freq: freq
+  });
 
+  var sensor3 = new five.Sensor({
+    id: 2,
+    pin: 9,
+    type: 'digital',
+    freq: freq
+  });
+
+  var sensor4 = new five.Sensor({
+    id: 3,
+    pin: 10,
+    type: 'digital',
+    freq: freq
+  });
+
+  const sensors = [
+    sensor1,
+    sensor2,
+    sensor3,
+    sensor4
+  ];
+
+  
+  /*   const sensor = new five.Sensor({
+    pin: 7,
+    type: 'digital',
+    freq: freq
+  });
+
+  const sensor2 = new five.Sensor({
+    pin: 7,
+    type: 'digital',
+    freq: freq
+  }); */
+
+
+
+
+  let test;
+
+  rpmUpdates.subscribe((update: Object) => {
+    console.log('update: ');
+    console.log(update);
+    if (test) {
+      test.send('SendRpm',  update);
+    }
+  })
+
+  sensor1.on('data', () => {
+    getRPM(sensor1.value, sensor1.id);
+  });
+  sensor2.on('data', () => {
+    getRPM(sensor2.value, sensor2.id);
+  });
+ /* sensor3.on('data', () => {
+    getRPM(sensor3.value, sensor3.id);
+  });
+  sensor4.on('data', () => {
+    getRPM(sensor4.value, sensor4.id);
+  }); */
+}); 
 
 board.on('error', () => {
   console.log('error');
@@ -78,6 +110,48 @@ if (serve) {
   require('electron-reload')(__dirname, {});
 }
 
+function getRPM(value, sensorId) {
+  valuesAll[sensorId].push(value);
+  if (valuesAll[sensorId].length > amount) {
+    valuesAll[sensorId].splice(0, 1);
+
+    let prevValue = valuesAll[sensorId][0];
+    let sum = 1;
+    let result = [];
+    for (let i = 1; i < valuesAll[sensorId].length; i++) {
+      if (valuesAll[sensorId][i] !== prevValue) {
+        result.push(sum);
+        sum = 1;
+        prevValue = valuesAll[sensorId][i];
+      } else {
+        sum++;
+      }
+    }
+
+    result.push(sum);
+
+    var length = result.length;
+    if (length === 1) {
+      rpmUpdates.next({
+        value: 0,
+        sensor: sensorId
+      });
+    }
+    else {
+      let averageFreq = result.reduce((a, b) => {
+        return a + b;
+      }, 0) / length * freq * 2 / 1000;
+
+      let rpm = 1 / averageFreq * 60;
+      console.log('rpm: ' + rpm);
+      rpmUpdates.next({
+        value: Math.round(rpm),
+        sensor: sensorId
+      });
+    }
+  }
+}
+
 
 
 function createWindow() {
@@ -89,8 +163,8 @@ function createWindow() {
   win = new BrowserWindow({
     x: 0,
     y: 0,
-    width: size.width,
-    height: size.height
+    width: 300, //size.width
+    height: 200 //size.height
   });
 
   // and load the index.html of the app.

@@ -14,6 +14,7 @@ import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
 import { ElectronService } from './providers/electron.service';
+import { PlayersService } from './providers/players.service';
 
 //import { WebviewDirective } from 'app/directives/webview.directive';
 
@@ -21,6 +22,7 @@ import { AppComponent } from './app.component';
 import { HomeComponent } from './components/home/home.component';
 import { SetupComponent } from './components/setup/setup.component';
 import { GameComponent } from './components/game/game.component';
+import { OnChangeComponent } from './on-change/on-change.component';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient) {
@@ -33,7 +35,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     HomeComponent,
     //WebviewDirective,
     SetupComponent,
-    GameComponent
+    GameComponent,
+    OnChangeComponent
   ],
   imports: [
     BrowserModule,
@@ -48,7 +51,7 @@ export function HttpLoaderFactory(http: HttpClient) {
       }
     })
   ],
-  providers: [ElectronService],
+  providers: [ElectronService, PlayersService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

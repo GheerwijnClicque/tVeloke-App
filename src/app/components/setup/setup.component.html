@@ -1,5 +1,45 @@
-<p>
-  setup works kinda!
-  <a href="#" (click)="navigate('/')">back</a>
-  
-</p>
+<div class="container">
+  <div class="content flexcontainer center column">
+      <div class="flexcontent">
+          <h1 class="title">GAME SETUP</h1>
+      </div>
+      <div class="flexcontent">
+        <div>
+          <h2>Select number of players</h2>
+          <div class="inline-block">
+              <div *ngFor="let maxPlayer of getMaxPlayers(); let index = index"  (click)="selectNumberOfPlayers(index + 1)" class="playernumber {{selectedPlayers === (index + 1) ? 'active' : ''}}"> {{index + 1}}</div>
+          </div>
+          <h2>
+            {{selectedPlayers}} player(s) selected
+          </h2>
+        </div>
+      </div>
+      <div class="flexcontent"></div>
+      <div class="flexcontent"></div>
+      <div class="flexcontent"></div>
+      <div class="flexcontent"></div>
+      <div class="flexcontent">
+          <div>
+              <div *ngFor="let player of getSelectedPlayers(); let index = index" class="inline-block characterselect">
+                <h2 contenteditable value="player.name" (keyup)="updatePlayerName($event, player.player)">{{player.name}}</h2>
+                <div>
+                    <div class="character inline-block" *ngFor="let character of characters; let charIndex = index" (click)="updatePlayerCharacter(player.player, character)">
+
+                      <img class="{{player.character === character ? 'active' : ''}}" [src]="getImgPath(character)" alt="">
+                    </div>
+                </div>
+              </div>
+          </div>
+      </div>
+      <div class="flexcontent"></div>
+      <div class="flexcontent navigatelink">
+          <a class="btn primary" (click)="navigate('/game')">PLAY</a>
+          
+          <p><a  (click)="navigate('/')">back</a></p>  
+      </div>
+  </div>
+
+
+
+
+</div>
