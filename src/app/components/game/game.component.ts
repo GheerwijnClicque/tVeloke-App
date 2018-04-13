@@ -15,15 +15,34 @@ export class GameComponent implements OnInit {
   public speed = '';
   public players: Array<Player> = [];
   public percent: number = 0.0;
+  public done: boolean = false;
+  public winners: string[] = [];
 
   private interval: any;
 
   constructor(private router: Router, private electronService: ElectronService, private playersService: PlayersService) {
+    this.winners = [];
     this.electronService.ipcRenderer.send('RequestRpm');
 
     this.electronService.ipcRenderer.on('SendRpm', (event, args) => {
-      console.log(args);
-      //this.speed = args;
+      if (this.players && this.players[args.sensor - 1]) {
+        this.players[args.sensor - 1].progress =Math.min(100, this.players[args.sensor - 1].progress + args.value / 1000);
+      }
+
+      // check if someone has won
+      if (this.winners.length === 0) {
+        this.winners = this.players.reduce((prev: any, next: any, index: number) => {
+          if (next.progress >= 100) {
+            prev.push(`Player ${index + 1} has wone`);
+          }
+          return prev;
+        }, []);
+
+        if (this.winners.length > 0) {
+          console.log(this.winners);
+        }
+      }
+
     })
   }
 
@@ -33,31 +52,11 @@ export class GameComponent implements OnInit {
 
   ngOnInit() {
     this.players = this.playersService.getPlayers();
-    console.log('players ' + this.players.length);
+    this.winners = [];
+    // console.log('players ' + this.players.length);
     if (this.players.length <= 0) {
       this.navigate('/setup');
     }
-
-    this.interval = setInterval(() => {
-        
-        if (this.players.length > 0) {
-          this.players[0].progress += 1;
-          this.players[1].progress += 2;
-        }
-
-        this.percent += 1;    
-
-
-        if (this.percent >= 100) {
-          clearInterval(this.interval);
-          return;
-        }
-    }, 100);
-  }
-
-  private updatePlayerProgress(playerId, progress) {
-    console.log(playerId);
-    this.players[playerId].progress += progress;
   }
 
   private playerHasWon(player) {

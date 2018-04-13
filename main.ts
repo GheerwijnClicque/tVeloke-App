@@ -5,7 +5,7 @@ var five = require("johnny-five");
 import * as url from 'url';
 import { setInterval } from 'timers';
 const now = require('performance-now');
-const board = new Board({debug: true, repl: false});
+const board = new Board({debug: true, repl: false, port: 'COM4'});
 const values = [];
 const amount = 50;
 const freq = 50; //ms
@@ -23,28 +23,28 @@ var valuesAll = [
  board.on('ready', () => {
   // Initialize sensors
   var sensor1 = new five.Sensor({
-    id: 0,
+    id: 1,
     pin: 7,
     type: 'digital',
     freq: freq
   });
 
   var sensor2 = new five.Sensor({
-    id: 1,    
+    id: 2,
     pin: 8,
     type: 'digital',
     freq: freq
   });
 
   var sensor3 = new five.Sensor({
-    id: 2,
+    id: 3,
     pin: 9,
     type: 'digital',
     freq: freq
   });
 
   var sensor4 = new five.Sensor({
-    id: 3,
+    id: 4,
     pin: 10,
     type: 'digital',
     freq: freq
@@ -57,27 +57,13 @@ var valuesAll = [
     sensor4
   ];
 
-  
-  /*   const sensor = new five.Sensor({
-    pin: 7,
-    type: 'digital',
-    freq: freq
-  });
-
-  const sensor2 = new five.Sensor({
-    pin: 7,
-    type: 'digital',
-    freq: freq
-  }); */
-
-
-
-
   let test;
 
+  ipcMain.on('RequestRpm', (event, arg) => {
+    test = event.sender;
+  });
+
   rpmUpdates.subscribe((update: Object) => {
-    console.log('update: ');
-    console.log(update);
     if (test) {
       test.send('SendRpm',  update);
     }
@@ -89,13 +75,13 @@ var valuesAll = [
   sensor2.on('data', () => {
     getRPM(sensor2.value, sensor2.id);
   });
- /* sensor3.on('data', () => {
+ sensor3.on('data', () => {
     getRPM(sensor3.value, sensor3.id);
   });
   sensor4.on('data', () => {
     getRPM(sensor4.value, sensor4.id);
-  }); */
-}); 
+  });
+});
 
 board.on('error', () => {
   console.log('error');
@@ -111,6 +97,9 @@ if (serve) {
 }
 
 function getRPM(value, sensorId) {
+  if (!valuesAll[sensorId]) {
+    valuesAll[sensorId] = [];
+  }
   valuesAll[sensorId].push(value);
   if (valuesAll[sensorId].length > amount) {
     valuesAll[sensorId].splice(0, 1);

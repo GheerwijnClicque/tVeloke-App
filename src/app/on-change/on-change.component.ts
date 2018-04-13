@@ -31,8 +31,8 @@ export class OnChangeComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log('width: ' );
-    console.log(this.line1.nativeElement.offsetWidth);
+    // console.log('width: ' );
+    // console.log(this.line1.nativeElement.offsetWidth);
   }
 
   public ngOnChanges( changes: SimpleChanges ) : void {
@@ -42,26 +42,26 @@ export class OnChangeComponent implements OnInit {
       } else if ( this.percent > 100 ) {
           this.percent = 100;
       }
-      
+
       var radius = 9;
       //var totalLength = ( Math.PI * 2 * radius );
       var totalLength = 1000;
       var pathLength = ( totalLength * this.percent / 100 );
 
-      console.log(this.percent);
+      // console.log(this.percent);
 
       this.dashArray = `${ pathLength },100`;
-      
+
       var xy;
-      console.log(this.xy);
+      // console.log(this.xy);
 
       var percent = this.percent;
-      console.log('first');
-      xy = this.getLineXYatPercent({x: 0, y: 0}, {x: 1493, y: 0}, percent);            
+      // console.log('first');
+      xy = this.getLineXYatPercent({x: 0, y: 0}, {x: 1493, y: 0}, percent);
 
       this.xy = xy;
-      console.log('xy: ');
-      console.log(xy);
+      // console.log('xy: ');
+      // console.log(xy);
   }
 
   private getLineXYatPercent(startPt,endPt,percent) {

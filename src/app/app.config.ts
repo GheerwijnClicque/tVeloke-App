@@ -10,7 +10,7 @@ const PROD: String = 'prod';
 
 let conf: any;
 
-console.log('Env', ENV);
+// console.log('Env', ENV);
 
 if (ENV === PROD) {
   conf = CONF_PROD;
