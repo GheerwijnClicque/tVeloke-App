@@ -14,6 +14,7 @@ export class SetupComponent implements OnInit {
   private maxPlayers: number = 4;
   public selectedPlayers: number = 2;
   public characters: Array<string> = ["elephant", "pig", "chicken", "lion"];
+  optionSelected: any;
   
   constructor(private router: Router, private playersService: PlayersService) { 
     
@@ -25,7 +26,9 @@ export class SetupComponent implements OnInit {
         player: i,
         name: 'Player ' + (i + 1),
         character: this.characters[i],
-        progress: 0
+        progress: 0,
+        wheel_radius: 22,
+        rpm: 0,
       };
     }
 
@@ -63,4 +66,10 @@ export class SetupComponent implements OnInit {
   public getImgPath(character: string) {
     return "assets/characters/" + character + ".svg";
   }
+
+  public onOptionsSelected(event, player){
+    this.players[player].wheel_radius = event;
+    this.playersService.persist(this.getSelectedPlayers());    
+   }
+ 
 }

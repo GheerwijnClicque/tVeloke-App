@@ -5,7 +5,7 @@ var five = require("johnny-five");
 import * as url from 'url';
 import { setInterval } from 'timers';
 const now = require('performance-now');
-const board = new Board({debug: true, repl: false, port: 'COM4'});
+const board = new Board({debug: true, repl: false});
 const values = [];
 const amount = 50;
 const freq = 50; //ms

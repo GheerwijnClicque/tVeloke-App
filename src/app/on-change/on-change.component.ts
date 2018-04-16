@@ -1,4 +1,5 @@
 import { Component, OnInit, ChangeDetectionStrategy, ElementRef, ViewChild, OnChanges, SimpleChanges } from '@angular/core';
+import { Player } from 'app/player';
 
 @Component({
   templateUrl: './on-change.component.html',
@@ -6,7 +7,8 @@ import { Component, OnInit, ChangeDetectionStrategy, ElementRef, ViewChild, OnCh
   selector: "on-change",
   inputs: [
       "percent",
-      "color"
+      "color",
+      "player"
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -15,13 +17,16 @@ export class OnChangeComponent implements OnInit {
   public dashArray: string;
   public percent: number;
   public y: number;
+  public player: Player;
 
   public xTestPos: number = 100;
   public xy: any = {x: 0, y: 0};
   public xFirst: number = 600;
 
-  @ViewChild('line1')
-  line1: ElementRef;
+  public containerWidth: number = 0;
+
+  @ViewChild('container')
+  container: ElementRef;
 
   constructor() {
     this.color = "currentColor"; // Will inherit the current color context.
@@ -31,8 +36,10 @@ export class OnChangeComponent implements OnInit {
   }
 
   ngOnInit() {
-    // console.log('width: ' );
-    // console.log(this.line1.nativeElement.offsetWidth);
+    this.containerWidth = this.container.nativeElement.offsetWidth;
+      console.log(this.player);
+    console.log('width: ' );
+     console.log(this.containerWidth);
   }
 
   public ngOnChanges( changes: SimpleChanges ) : void {
@@ -57,11 +64,9 @@ export class OnChangeComponent implements OnInit {
 
       var percent = this.percent;
       // console.log('first');
-      xy = this.getLineXYatPercent({x: 0, y: 0}, {x: 1493, y: 0}, percent);
+      xy = this.getLineXYatPercent({x: 0, y: 0}, {x: this.containerWidth, y: 0}, percent);
 
       this.xy = xy;
-      // console.log('xy: ');
-      // console.log(xy);
   }
 
   private getLineXYatPercent(startPt,endPt,percent) {
@@ -71,5 +76,7 @@ export class OnChangeComponent implements OnInit {
       var Y = (startPt.y + dy*percent) / 100;
       return( {x:X,y:Y} );
   }
-
+  public getImgPath(character) {
+      return "assets/characters/" + character + ".svg";
+  }
 }

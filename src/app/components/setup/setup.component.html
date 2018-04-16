@@ -1,17 +1,18 @@
 <div class="container">
   <div class="content flexcontainer center column">
       <div class="flexcontent">
-          <h1 class="title">GAME SETUP</h1>
+        <p class="backBtn"><a  (click)="navigate('/')" style="width: 20%">back</a></p>  
+        <h1 class="title">GAME SETUP</h1>
       </div>
       <div class="flexcontent">
         <div>
-          <h2>Select number of players</h2>
+          <!-- <h2>Select number of players</h2> -->
           <div class="inline-block">
-              <div *ngFor="let maxPlayer of getMaxPlayers(); let index = index"  (click)="selectNumberOfPlayers(index + 1)" class="playernumber {{selectedPlayers === (index + 1) ? 'active' : ''}}"> {{index + 1}}</div>
+              <div *ngFor="let maxPlayer of getMaxPlayers(); let index = index"  (click)="selectNumberOfPlayers(index + 1)" class="playernumber {{selectedPlayers === (index + 1) ? 'active' : ''}}"> 
+                  <h2>{{index + 1}}</h2>
+                  <p>Player<span *ngIf="(index + 1) > 1">s</span></p>
+                </div>
           </div>
-          <h2>
-            {{selectedPlayers}} player(s) selected
-          </h2>
         </div>
       </div>
       <div class="flexcontent"></div>
@@ -28,14 +29,24 @@
                       <img class="{{player.character === character ? 'active' : ''}}" [src]="getImgPath(character)" alt="">
                     </div>
                 </div>
+                <p>Wheel radius: 
+                   <!-- <span contenteditable (keyup)="updatePlayerName($event, player.player)">{{player.name}}</span> -->
+                    <select [(ngModel)]='player.wheel_radius' (ngModelChange)="onOptionsSelected($event, player.player)">
+                        <option value="12" >12 inch</option>
+                        <option value="16">16 inch</option>
+                        <option value="20">20 inch</option>
+                        <option value="22">22 inch</option>
+                        <option value="24">24 inch</option>
+                        <option value="26">26 inch</option>                        
+                    </select>
+                </p>
               </div>
           </div>
       </div>
       <div class="flexcontent"></div>
       <div class="flexcontent navigatelink">
           <a class="btn primary" (click)="navigate('/game')">PLAY</a>
-          
-          <p><a  (click)="navigate('/')">back</a></p>  
+
       </div>
   </div>
 

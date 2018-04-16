@@ -1,6 +1,6 @@
-<section style="width: 100%;" #line1>
-  <svg id="player1" preserveAspectRatio="xMidYMid meet" style="width: 100%;">
-    <image href="assets/characters/pig.svg" [attr.x]="xy.x" [attr.y]="xy.y" height="100" width="100" transform="translate(-5, -5)"/>         
-    <line x1="0" y1="0" x2="100%" y2="0" style="stroke: green;stroke-width:10" />
+<section style="width: 100%;" #container>
+  <svg id="player1" preserveAspectRatio="xMidYMid meet" style="width: 80%;">
+    <image class="character" [attr.xlink:href]="getImgPath(player.character)" [attr.x]="xy.x" [attr.y]="xy.y" height="100" width="100" transform="translate(10, 10)"/>         
+    <line class="ground" x1="10" y1="100" [attr.x2]="containerWidth - 10" y2="100"/>
   </svg>
 </section>
