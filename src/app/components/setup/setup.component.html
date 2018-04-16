@@ -25,11 +25,17 @@
                 <h2 contenteditable value="player.name" (keyup)="updatePlayerName($event, player.player)">{{player.name}}</h2>
                 <div>
                     <div class="character inline-block" *ngFor="let character of characters; let charIndex = index" (click)="updatePlayerCharacter(player.player, character)">
-
                       <img class="{{player.character === character ? 'active' : ''}}" [src]="getImgPath(character)" alt="">
                     </div>
                 </div>
-                <p>Wheel radius: 
+               <div>
+                    <p (click)="scrollThroughCharacters(player.player, false)">previous Character</p>
+                    <p (click)="scrollThroughCharacters(player.player, true)">next Character</p>
+                    <div class="character inline-block" (click)="updatePlayerCharacter(player.player, player.character)">
+                      <img class="{{player.character === character ? 'active' : ''}}" [src]="getImgPath(player.character)" alt="">
+                    </div>
+                </div>
+                <p>Wheel size: 
                    <!-- <span contenteditable (keyup)="updatePlayerName($event, player.player)">{{player.name}}</span> -->
                     <select [(ngModel)]='player.wheel_radius' (ngModelChange)="onOptionsSelected($event, player.player)">
                         <option value="12" >12 inch</option>

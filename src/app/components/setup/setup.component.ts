@@ -70,6 +70,23 @@ export class SetupComponent implements OnInit {
   public onOptionsSelected(event, player){
     this.players[player].wheel_radius = event;
     this.playersService.persist(this.getSelectedPlayers());    
-   }
+  }
  
+  public scrollThroughCharacters(playerIndex: number, direction: boolean) {
+    let player = this.players[playerIndex];
+    let currentIndex = this.characters.indexOf(player.character);
+console.log(currentIndex);
+    if (direction) { // forward
+      let nextIndex =  ((currentIndex++) > this.characters.length) ? 0 : currentIndex++;
+      console.log('nextIndex: ' + currentIndex + 1);
+      player.character = this.characters[nextIndex];
+    }
+    else { // backwards
+      let prevIndex =  ((currentIndex--) < 0) ? currentIndex = this.characters.length : currentIndex--;
+      console.log('prevIndex: ' + prevIndex);
+      player.character = this.characters[prevIndex];
+    }
+
+    //this.playersService.persist(this.getSelectedPlayers());    
+  }
 }

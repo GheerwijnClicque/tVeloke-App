@@ -23,6 +23,7 @@ import { HomeComponent } from './components/home/home.component';
 import { SetupComponent } from './components/setup/setup.component';
 import { GameComponent } from './components/game/game.component';
 import { OnChangeComponent } from './on-change/on-change.component';
+import { CharacterSelectorComponent } from './character-selector/character-selector.component';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient) {
@@ -36,7 +37,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     //WebviewDirective,
     SetupComponent,
     GameComponent,
-    OnChangeComponent
+    OnChangeComponent,
+    CharacterSelectorComponent
   ],
   imports: [
     BrowserModule,
